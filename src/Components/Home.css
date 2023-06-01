@@ -1,0 +1,70 @@
+main {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+body {
+    background: linear-gradient(-45deg, #ee7752, #ead248, #23a6d5);
+    background-size: 400% 400%;
+    animation: gradient 5s ease infinite;
+    height: 100vh;
+}
+.form {
+    height: 75%;
+    width: 400px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.avatar {
+    width: 70%;
+}
+.input-width {
+    width: 90px;
+}
+.GoogleIcon {
+    width: 250px;
+}
+.GoogleIcon:hover {
+    cursor: pointer;
+}
+.orang {
+    background-color: #4285f4 !important;
+    border: 1px solid #4285f4 !important;
+    width: 250px !important;
+}
+.dfex {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .form {
+        height: 75%;
+        width: 90%;
+        background-color: rgb(255, 255, 255);
+    }
+    .avatar {
+        max-height: 280px;
+        max-width: 280px;
+    }
+}
