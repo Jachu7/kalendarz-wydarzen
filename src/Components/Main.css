@@ -1,0 +1,62 @@
+#root {
+    height: 100%;
+}
+.calendar {
+    width: 80%;
+    float: left;
+    padding: 40px 40px 0 40px;
+    border-left: 1px solid grey;
+    height: 800px;
+}
+.rbc-event:hover {
+    background-color: rgb(156, 0, 0);
+}
+.btn-dark {
+    width: 130px;
+}
+header {
+    clear: both;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid gray;
+}
+header h1 {
+    color: rgb(255, 160, 35);
+}
+section {
+    float: left;
+    width: 20%;
+    height: 100%;
+}
+section h1 {
+    margin-left: 20px;
+}
+li {
+    list-style: none;
+    padding: 5px 10px;
+    border-left: 8px solid rgb(255, 160, 35);
+    margin-bottom: 20px;
+    margin-right: 20px;
+    width: 80%;
+}
+li:hover {
+    background-color: rgb(156, 0, 0);
+    border-left: 8px solid rgb(156, 0, 0);
+    color: white;
+    cursor: pointer;
+}
+.select {
+    width: 80% !important;
+    margin: auto;
+    margin-left: 20px;
+}
+.rbc-header:nth-child(6),
+.rbc-header:nth-child(7) {
+    background-color: rgb(255, 220, 175);
+}
+.rbc-day-bg:hover {
+    background-color: #e6e6e6;
+    cursor: pointer;
+}
