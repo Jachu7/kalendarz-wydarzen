@@ -92,33 +92,27 @@ body {
     }
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 1070px) {
     .form {
         height: 75%;
-        width: 90%;
+        width: 400px;
+        height: 90%;
         background-color: rgb(255, 255, 255);
     }
     .avatar {
         max-height: 280px;
         max-width: 280px;
     }
-}
-@media screen and (max-width: 360px) {
-    .form {
-        height: 100%;
-        width: 100%;
-        background-color: rgb(255, 255, 255);
+    aside p {
+        font-size: 1rem;
+        margin-top: 1rem;
+        text-align: center;
     }
-    .avatar {
-        max-height: 280px;
-        max-width: 280px;
-    }
-    aside {
-        display: none;
+    .tc {
+        font-size: 2.5rem;
     }
 }
-
-@media screen and (max-height: 770px) {
+@media screen and (max-width: 420px) {
     .form {
         height: 100%;
         width: 100%;
@@ -127,7 +121,21 @@ body {
     main {
         background: linear-gradient(-45deg, #fff, #fff);
     }
+    .avatar {
+        max-height: 280px;
+        max-width: 280px;
+    }
     aside {
         display: none;
+    }
+}
+@media screen and (max-height: 800px) {
+    .form {
+        height: 90%;
+        background-color: rgb(255, 255, 255);
+    }
+    .avatar {
+        max-height: 220px;
+        max-width: 220px;
     }
 }

@@ -28,7 +28,6 @@ function Login({ onToggle }) {
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
-                    console.log(user.displayName, user.email);
                 })
                 .catch((error) => {
                     const errorCode = error.code;
@@ -48,7 +47,6 @@ function Login({ onToggle }) {
                 const credential =
                     GoogleAuthProvider.credentialFromResult(result);
                 const user = result.user;
-                console.log(user.displayName, user.email);
             })
             .catch((error) => {
                 const errorCode = error.code;

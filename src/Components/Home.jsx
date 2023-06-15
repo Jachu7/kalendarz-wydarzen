@@ -13,7 +13,6 @@ function Home() {
     const navigate = useNavigate();
     auth.onAuthStateChanged((user) => {
         if (user) {
-            console.log(user.email);
             navigate("/main");
         }
     });
@@ -37,7 +36,9 @@ function Home() {
     return (
         <main>
             <aside>
-                <h1 className="mt-4 text-center">kalendarz-wydarzeń.web.app</h1>
+                <h1 className="mt-4 text-center tc">
+                    kalendarz-wydarzeń.web.app
+                </h1>
                 <p>Twój terminarz, dzienniczek i kalendarz w jednym miejscu!</p>
             </aside>
             <div className="main">

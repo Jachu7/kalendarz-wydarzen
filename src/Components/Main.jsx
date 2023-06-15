@@ -5,15 +5,58 @@ import "./Main.css";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
+import {
+    getDatabase,
+    ref,
+    child,
+    push,
+    update,
+    get,
+    remove,
+} from "firebase/database";
 
 function Main() {
     const [nazwaUzytkownika, setNazwaUzytkownika] = useState("");
     const navigate = useNavigate();
+    const [selectedSortOption, setSelectedSortOption] = useState(0);
+    const [events, setEvents] = useState([
+        // {
+        //     start: moment().toDate(),
+        //     end: moment().add(1, "days").toDate(),
+        //     title: "Twoje wydarzenie!",
+        //     startDate: moment().format("YYYY-MM-DD"),
+        //     endDate: moment().add(1, "days").format("YYYY-MM-DD"),
+        // },
+    ]);
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged((user) => {
             if (user) {
                 setNazwaUzytkownika(user.email);
+                writeUserData(user.uid, user.email);
+
+                // downloading events
+                const db = getDatabase();
+                get(child(ref(db), `users/${auth.currentUser.uid}/events`))
+                    .then((snapshot) => {
+                        if (snapshot.exists()) {
+                            const eventsData = snapshot.val();
+                            setEvents(Object.values(eventsData));
+
+                            // alert o wydarzeniu
+                            const today = moment().format("YYYY-MM-DD");
+                            Object.values(eventsData).forEach((event) => {
+                                if (event.startDate === today) {
+                                    alert(
+                                        `Dzisiaj masz zaplanowane wydarzenie: ${event.title}`
+                                    );
+                                }
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
             } else {
                 navigate("/");
             }
@@ -29,22 +72,59 @@ function Main() {
         },
     });
 
-    const [events, setEvents] = useState([
-        {
-            start: moment().toDate(),
-            end: moment().add(1, "days").toDate(),
-            title: "Twoje wydarzenie!",
-        },
-    ]);
+    useEffect(() => {
+        sortEvents();
+    }, [selectedSortOption]);
+
+    const sortEvents = () => {
+        const sortedEvents = [...events];
+
+        switch (selectedSortOption) {
+            case "1":
+                sortedEvents.sort((a, b) => a.title.localeCompare(b.title));
+                break;
+            case "2":
+                sortedEvents.sort((a, b) => b.title.localeCompare(a.title));
+                break;
+            case "3":
+                sortedEvents.sort(
+                    (a, b) => new Date(a.start) - new Date(b.start)
+                );
+                break;
+            case "4":
+                sortedEvents.sort(
+                    (a, b) => new Date(b.start) - new Date(a.start)
+                );
+                break;
+            default:
+                break;
+        }
+
+        setEvents(sortedEvents);
+    };
 
     const handleSelect = ({ start, end }) => {
         const title = window.prompt("Wpisz nazwe wydarzenia:");
-        if (title) {
+        if (title && auth.currentUser) {
+            const db = getDatabase();
+
+            const newEventKey = push(
+                child(ref(db), `users/${auth.currentUser.uid}/events`)
+            ).key;
+
             const newEvent = {
+                key: newEventKey,
                 start,
                 end,
                 title,
+                startDate: moment(start).format("YYYY-MM-DD"),
+                endDate: moment(end).format("YYYY-MM-DD"),
             };
+
+            const updates = {};
+            updates[`/users/${auth.currentUser.uid}/events/` + newEventKey] =
+                newEvent;
+            update(ref(db), updates);
             setEvents((prevEvents) => [...prevEvents, newEvent]);
         }
     };
@@ -54,9 +134,19 @@ function Main() {
             `Czy na pewno chcesz usunąć wydarzenie: ${event.title}?`
         );
         if (confirm) {
-            setEvents((prevEvents) =>
-                prevEvents.filter((e) => e.title !== event.title)
-            );
+            if (auth.currentUser) {
+                const db = getDatabase();
+                remove(
+                    child(
+                        ref(db),
+                        `users/${auth.currentUser.uid}/events/` + event.key
+                    )
+                );
+
+                setEvents((prevEvents) =>
+                    prevEvents.filter((e) => e.key !== event.key)
+                );
+            }
         }
     };
 
@@ -64,10 +154,26 @@ function Main() {
         handleDelete(event);
     };
 
+    const handleSortChange = (event) => {
+        setSelectedSortOption(event.target.value);
+    };
+
+    function writeUserData(userId, email) {
+        const db = getDatabase();
+        update(ref(db, "users/" + userId), {
+            email: email,
+        });
+    }
+
     return (
         <div>
             <header className="px-4">
-                <h1 onClick={() => console.log(events)} className="my-2">
+                <h1
+                    className="my-2"
+                    onClick={() => {
+                        console.log(events);
+                    }}
+                >
                     Kalendarz użytkownika: {nazwaUzytkownika}
                 </h1>
                 <button className="btn btn-dark" onClick={() => auth.signOut()}>
@@ -79,7 +185,8 @@ function Main() {
                 <select
                     className="form-select form-select-sm select"
                     aria-label=".form-select-sm example"
-                    defaultValue={0}
+                    value={selectedSortOption}
+                    onChange={handleSortChange}
                 >
                     <option value="0">Sortuj:</option>
                     <option value="1">Alfabetycznie - Rosnąco</option>
@@ -104,7 +211,7 @@ function Main() {
 
                         return (
                             <li
-                                key={event.title}
+                                key={event.key}
                                 onClick={() => handleListItemClick(event)}
                             >
                                 {event.title} <br />
@@ -138,6 +245,16 @@ function Main() {
                         time: "Czas",
                         event: "Wydarzenie",
                         showMore: (total) => `+ Pokaż więcej (${total})`,
+                    }}
+                    eventPropGetter={() => {
+                        let newStyle = {
+                            backgroundColor: "rgb(255, 160, 35)",
+                            color: "black",
+                            border: "none",
+                        };
+                        return {
+                            style: newStyle,
+                        };
                     }}
                 />
             </div>
